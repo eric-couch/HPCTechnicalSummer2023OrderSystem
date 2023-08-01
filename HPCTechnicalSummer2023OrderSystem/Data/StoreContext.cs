@@ -17,9 +17,11 @@ internal class StoreContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Data Sourse=(localdb)\\mssqllocaldb;Initial Catalog=HpcTechnicalStore;Integrated Security=True;");
+        optionsBuilder.UseSqlServer(@"Data Source=(localdb)\mssqllocaldb;Initial Catalog=HpcTechnicalStore;Integrated Security=True;");
+
     }
 
+    
     // override the onModelCreate to seed data
 }
 
