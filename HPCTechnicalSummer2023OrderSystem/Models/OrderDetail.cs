@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HPCTechnicalSummer2023OrderSystem.Models;
 
-internal class OrderDetail
+public class OrderDetail
 {
     public int Id { get; set; }
     public int Quantity { get; set; }

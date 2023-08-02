@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HPCTechnicalSummer2023OrderSystem.Models;
 
-internal class Customer
+public class Customer
 {
     public int Id { get; set; }
     [StringLength(200)]
@@ -20,4 +20,8 @@ internal class Customer
 
     public ICollection<Order> Orders { get; set; } = null!;
 
+    public override string? ToString()
+    {
+        return $"\tId:\t{Id}\n\tFirst Name:\t{FirstName}\n\tLast Name:\t{LastName}\n\tAddress:\t{Address}\n\tPhone:{Phone}\n\tEmail:\t{Email}\n";
+    }
 }

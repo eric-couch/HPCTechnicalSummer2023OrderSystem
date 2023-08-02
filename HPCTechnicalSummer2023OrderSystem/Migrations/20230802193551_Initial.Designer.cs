@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HPCTechnicalSummer2023OrderSystem.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20230801192038_Initial")]
+    [Migration("20230802193551_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -36,9 +36,13 @@ namespace HPCTechnicalSummer2023OrderSystem.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -50,6 +54,17 @@ namespace HPCTechnicalSummer2023OrderSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "201 Shaffner St.",
+                            Email = "eric.couch@cognizant.com",
+                            FirstName = "Eric",
+                            LastName = "Couch",
+                            Phone = "(817) 304-9048"
+                        });
                 });
 
             modelBuilder.Entity("HPCTechnicalSummer2023OrderSystem.Models.Order", b =>
@@ -74,6 +89,15 @@ namespace HPCTechnicalSummer2023OrderSystem.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CustomerId = 1,
+                            OrderFulfilled = new DateTime(2023, 8, 1, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderPlaced = new DateTime(2023, 8, 1, 10, 30, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("HPCTechnicalSummer2023OrderSystem.Models.OrderDetail", b =>
@@ -100,6 +124,15 @@ namespace HPCTechnicalSummer2023OrderSystem.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            OrderId = 1,
+                            ProductId = 3,
+                            Quantity = 1
+                        });
                 });
 
             modelBuilder.Entity("HPCTechnicalSummer2023OrderSystem.Models.Product", b =>
@@ -120,6 +153,26 @@ namespace HPCTechnicalSummer2023OrderSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Pepperoni Pizza",
+                            Price = 8.99m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Deluxe Pizza",
+                            Price = 12.99m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Meat Lover's Pizza",
+                            Price = 10.99m
+                        });
                 });
 
             modelBuilder.Entity("HPCTechnicalSummer2023OrderSystem.Models.Order", b =>

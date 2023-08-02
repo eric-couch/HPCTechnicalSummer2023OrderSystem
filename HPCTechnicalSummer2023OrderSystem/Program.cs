@@ -7,41 +7,93 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        using StoreContext context = new StoreContext();
+        Customer thisCustomer = new Customer();
+        OrderService thisOrder = new OrderService();
+        
+        Console.Write("Enter First Name: ");
+        thisCustomer.FirstName = Console.ReadLine() ?? "";
+        Console.Write("Enter Last Name: ");
+        thisCustomer.LastName = Console.ReadLine() ?? "";
 
-        var products = (context.Products
-                        //.Where(p => p.Price > 10.00M)
-                        .OrderBy(p => p.Name)).ToList();
+        var findCustomer = thisOrder.FindCustomer(thisCustomer);
 
-        Console.WriteLine("Products list before Price update:");
-
-        foreach ( var product in products )
+        if (findCustomer == null) 
         {
-            Console.WriteLine($"Id:\t{product.Id}");
-            Console.WriteLine($"Name:\t{product.Name}");
-            Console.WriteLine($"Price:\t{product.Price}");
-            Console.WriteLine(new String('-', 20));
-        }
-
-        var meatLovers = (from p in context.Products
-                         where p.Name == "Meat Lovers Pizza"
-                         select p).FirstOrDefault();
-
-        if (meatLovers != null && meatLovers is Product ) {
-            context.Products.Remove( meatLovers );
-        }
-
-        context.SaveChanges();
-
-        var newProducts = (from p in context.Products select p).ToList();
-        Console.WriteLine("Product list after removing meat lovers:");
-        foreach (var product in newProducts)
+            Console.WriteLine("Customer not found.");
+            Console.Write("Enter your address: ");
+            thisCustomer.Address = Console.ReadLine() ?? "";
+            Console.Write("Enter your phone: ");
+            thisCustomer.Phone = Console.ReadLine() ?? "";
+            Console.Write("Enter your email: ");
+            thisCustomer.Email = Console.ReadLine() ?? "";
+            thisCustomer = thisOrder.SaveCustomer(thisCustomer);
+        } else
         {
-            Console.WriteLine($"Id:\t{product.Id}");
-            Console.WriteLine($"Name:\t{product.Name}");
-            Console.WriteLine($"Price:\t{product.Price}");
-            Console.WriteLine(new String('-', 20));
+            thisCustomer = findCustomer;
+            Console.WriteLine("Customer found");
+            Console.WriteLine(thisCustomer.ToString());
         }
 
+        bool quitOrder = false;
+
+        do
+        {
+            Console.WriteLine(OrderService.MainMenu());
+            string userReponse = Console.ReadLine() ?? "";
+
+            if (userReponse.ToLower() == "l")
+            {
+                Console.Clear();
+                List<Order> orders = thisOrder.GetOrders(thisCustomer);
+                if (orders is null)
+                {
+                    Console.WriteLine("No orders found.");
+                } else
+                {
+                    Console.WriteLine(thisOrder.ListOrder(orders));
+                }
+            }else if (userReponse.ToLower() == "p")
+            {
+                Console.Clear();
+                Order newOrder = new Order()
+                {
+                    Customer = thisCustomer,
+                    OrderPlaced = DateTime.Now
+                };
+                OrderDetail od = new OrderDetail()
+                {
+                    Order = newOrder
+                };
+                bool doneWithProducts = false;
+                do
+                {
+                    Console.WriteLine(thisOrder.OrderMenu());
+                    string orderItem = Console.ReadLine() ?? "q";
+                    if (orderItem.ToLower() == "q")
+                    {
+                        doneWithProducts = true;
+                    } else if (Int32.TryParse(orderItem, out int productNumber))
+                    {
+                        var product = thisOrder.GetProduct(productNumber);
+                        if (product is not null)
+                        {
+                            od.Products = product;
+                            od.Quantity = 1;
+                            thisOrder.SaveOrder(newOrder);
+                            thisOrder.SaveOrderDetail(od);
+                            doneWithProducts=true;
+                        }
+                    } else
+                    {
+                        Console.WriteLine("Invalid entry.  Try again.");
+                    }
+                } while (!doneWithProducts);
+            } else
+            {
+                quitOrder = true;
+            }
+
+
+        } while (!quitOrder);
     }
 }

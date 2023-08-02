@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HPCTechnicalSummer2023OrderSystem.Models;
 
-internal class Order
+public class Order
 {
     public int Id { get; set; }
     public DateTime OrderPlaced { get; set; }
@@ -17,4 +17,9 @@ internal class Order
 
     public Customer Customer { get; set; } = null!;
     public ICollection<OrderDetail> OrderDetails{ get; set; } = null!;
+
+    //public override string? ToString()
+    //{
+    //    //return 
+    //}
 }
